@@ -5,6 +5,10 @@ import { Carousel } from "react-responsive-carousel";
 export default function ImageCarousel() {
   const [showThumbs, setShowThumbs] = useState(window.innerWidth > 900);
 
+  if (typeof window === "undefined") {
+    return null;
+  }
+
   useEffect(() => {
     const handleResize = () => {
       setShowThumbs(window.innerWidth > 768);
