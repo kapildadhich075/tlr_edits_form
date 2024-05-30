@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.scrollable-content {
+  max-height: calc(
+    500vh - 400px
+  ); /* Adjust based on your header/footer height */
+  overflow-y: auto;
+  padding-bottom: 50px; /* Ensure content is not hidden behind fixed footer */
+}
