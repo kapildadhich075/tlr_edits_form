@@ -8,12 +8,12 @@ import FixedCard from "./FixedCard";
 
 const PropertyCard = () => {
   return (
-    <div className="relative bg-slate-200 p-5 m-5 rounded-md flex flex-col md:flex-row gap-5 justify-center items-center">
+    <div className="relative bg-slate-200 p-0 md:p-5 lg:p-5 m-5 rounded-md flex flex-col md:flex-row gap-5 justify-center items-center">
       <div className="md:w-1/2 lg:w-2/3">
         <ImageCarousel />
       </div>
-      <div className="flex flex-col justify-between md:w-1/2 lg:w-2/3">
-        <div>
+      <div className="flex flex-col justify-between md:w-1/2 lg:w-2/3 p-5">
+        <div className="md:scrollable-content lg:scrollable-content overflow-auto md:h-auto lg:h-auto h-[400px]">
           <div className="mb-2">
             <h1 className="text-2xl font-light">Tangled Up In Green</h1>
           </div>
@@ -34,12 +34,15 @@ const PropertyCard = () => {
 
           <div className="flex flex-col md:flex-row p-2 mt-5 items-start md:items-stretch gap-5">
             <div className="flex flex-col w-full">
-              <div className="scrollable-content">
+              <div className="">
                 <Details />
                 <div className="border-t-2 border-yellow-900 mb-2 mt-2"></div>
                 <Details2 />
                 <div className="border-t-2 border-yellow-900 mt-2 mb-2"></div>
-                <Amenity />
+
+                <div className="hidden md:block md:w-full">
+                  <Amenity />
+                </div>
               </div>
             </div>
             <div className="hidden md:block md:w-full">
@@ -53,7 +56,7 @@ const PropertyCard = () => {
         </div>
         <DesktopButtons />
       </div>
-      <div className="block md:hidden fixed bottom-0 left-0 right-0 bg-white p-4 shadow-lg z-10">
+      <div className="block md:hidden relative bottom-0 rounded-2xl left-0 right-0 bg-white  shadow-lg z-50">
         <FixedCard />
       </div>
     </div>
