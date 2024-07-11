@@ -1,9 +1,10 @@
-"use client";
-
 import React from "react";
-import TastyEditsForm from "../../_components/Cards";
 
-const HomePage = () => {
+type Props = {
+  children: React.ReactNode;
+};
+
+export default function layout({ children }: Props) {
   return (
     <>
       <div className="relative h-screen flex justify-center items-center">
@@ -16,14 +17,10 @@ const HomePage = () => {
           <source src="/bgv.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
-        <div className="relative z-10 bg-gray-900 bg-opacity-50 flex justify-center items-start w-full h-full">
-          <div className="container mx-auto p-6  bg-opacity-50 rounded-lg max-h-2xl">
-            <TastyEditsForm />
-          </div>
+        <div className=" p-6  bg-opacity-50 rounded-lg max-h-2xl relative z-10 flex  items-start w-full gap-4 min-h-full bg-gray-950/50">
+          {children}
         </div>
       </div>
     </>
   );
-};
-
-export default HomePage;
+}
