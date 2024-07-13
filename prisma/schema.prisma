@@ -1,0 +1,81 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+
+model FormData {
+  id                Int             @id @default(autoincrement())
+  orderType         OrderType
+  rawVideoFootage   RawVideoFootage[]
+  addOns            AddOns[]
+  orderLogistics    OrderLogistics[]
+  styleDetails      StyleDetails[]
+  orderDetails      OrderDetails[]
+  footageUpload     String
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+}
+
+enum OrderType {
+  HORIZONTAL_VIDEO
+  VERTICAL_VIDEO
+  CHANNEL_ASSETS
+  THUMBNAIL
+}
+
+model RawVideoFootage {
+  id             Int       @id @default(autoincrement())
+  footageLength  Int
+  footageSize    Int
+  formDataId     Int
+  formData       FormData  @relation(fields: [formDataId], references: [id], map: "RawVideoFootage_FormData_fkey")
+}
+
+enum AddOns {
+  THUMBNAIL
+  VERTICAL_REFORMAT
+  SQUARE_REFORMAT
+  HORIZONTAL_REFORMAT
+  FULL_VIDEO_CAPTION
+  PROJECT_FILE
+}
+
+model OrderLogistics {
+  id            Int      @id @default(autoincrement())
+  title         String
+  category      String
+  description   String
+  date          DateTime
+  finalLength   Int
+  formDataId    Int
+  formData      FormData @relation(fields: [formDataId], references: [id], map: "OrderLogistics_FormData_fkey")
+}
+
+model StyleDetails {
+  id            Int     @id @default(autoincrement())
+  pacing        String
+  tone          String
+  formDataId    Int
+  formData      FormData @relation(fields: [formDataId], references: [id], map: "StyleDetails_FormData_fkey")
+}
+
+model OrderDetails {
+  id            Int     @id @default(autoincrement())
+  editInstructions  String
+  exampleVideo      String
+  scriptLink        String
+  formDataId        Int
+  formData          FormData @relation(fields: [formDataId], references: [id], map: "OrderDetails_FormData_fkey")
+}
