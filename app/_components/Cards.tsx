@@ -8,18 +8,51 @@ import { ClerkLoaded, ClerkLoading, UserButton } from "@clerk/nextjs";
 import { Loader2, X } from "lucide-react";
 import { InlineWidget } from "react-calendly";
 import { ORDER_TYPES } from "../constants/OrderType";
+import { ADDONS } from "../constants/Addons";
+import { AddonCard } from "./AddonCard";
+import { Content } from "next/font/google";
+import OrderLogistics from "./OrderLogistics";
 
+interface VideoFootageDetails {
+  length: string;
+  size: string;
+}
+interface OrderLogisticsDetails {
+  videoTitle: String;
+  videoCategory: String;
+  videoDescription: String;
+  publishDate: String;
+  finalLength: Number;
+}
+interface FORM_DATA {
+  orderType: string;
+  videoFootageDetails: VideoFootageDetails;
+  Addons: String;
+  orderLogisticsDetails: OrderLogisticsDetails;
+  styleDetails: String;
+  orderDetails: String;
+  footageUpload: File | null;
+}
 const TastyEditsForm = () => {
   const router = useRouter();
 
   const [currentStep, setCurrentStep] = useState(1);
+  const [orderLogisticsDetails, setOrderLoigisticDetails] = useState({
+    videoTitle: "",
+    videoCategory: "",
+    videoDescription: "",
+    publishDate: "",
+    finalLength: 0,
+  });
   const [videoFootageDetails, setVideoFootageDetails] = useState({
     length: "",
     size: "",
   });
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FORM_DATA>({
     orderType: "",
     videoFootageDetails: videoFootageDetails,
+    Addons: "",
+    orderLogisticsDetails: orderLogisticsDetails,
     styleDetails: "",
     orderDetails: "",
     footageUpload: null,
@@ -50,6 +83,18 @@ const TastyEditsForm = () => {
         [name.split(".")[1]]: value,
       },
     }));
+
+    setOrderLoigisticDetails((prevDetails) => ({
+      ...prevDetails,
+      [name.split(".")[1]]: value,
+    }));
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      orderLogisticsDetails: {
+        ...prevFormData.orderLogisticsDetails,
+        [name.split(".")[1]]: value,
+      },
+    }));
   };
 
   const handleInputChange = (
@@ -60,6 +105,12 @@ const TastyEditsForm = () => {
     const { name, value } = event.target;
 
     setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+
+    setOrderLoigisticDetails((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
+    console.log(orderLogisticsDetails);
   };
 
   const handleFileUpload = (event: any) => {
@@ -88,10 +139,21 @@ const TastyEditsForm = () => {
           formData.videoFootageDetails.size
         );
       case 3:
-        return formData.styleDetails !== "";
+        return formData.Addons !== "";
       case 4:
-        return formData.orderDetails !== "";
+        const { videoTitle, videoCategory, videoDescription, publishDate, finalLength } = formData.orderLogisticsDetails;
+        return (
+          videoTitle !== "" &&
+          videoCategory !== "" &&
+          videoDescription !== "" &&
+          publishDate !== "" &&
+          finalLength !== 0
+        );
       case 5:
+        return formData.styleDetails !== "";
+      case 6:
+        return formData.orderDetails !== "";  
+      case 7:
         return formData.footageUpload !== null;
       default:
         return true;
@@ -142,7 +204,7 @@ const TastyEditsForm = () => {
         <div className="mb-4 flex flex-col gap-3">
           {[
             {
-              label: "Select Raw Footage Length",
+              label: "Select Raw Footage Length *",
               id: "videoFootageDetails.length",
               options: [
                 { value: "", text: "How Long is your raw footage in minutes" },
@@ -161,7 +223,7 @@ const TastyEditsForm = () => {
               ],
             },
             {
-              label: "Select Raw Footage Size",
+              label: "Select Raw Footage Size *",
               id: "videoFootageDetails.size",
               options: [
                 { value: "", text: "How Long is your Raw Footage Size in GB" },
@@ -216,13 +278,45 @@ const TastyEditsForm = () => {
       ),
     },
     {
+      title: "Addons",
+      content: (
+        <div className="grid grid-cols-3 gap-4">
+          {ADDONS.map((card, index) => (
+            <AddonCard
+              key={index}
+              id={card.id}
+              name="Addons"
+              value={card.value}
+              checked={formData.Addons == card.value}
+              onChange={(e) => handleInputChange(e)}
+              label={card.label}
+              para={card.para}
+              image={card.image}
+            />
+          ))}
+        </div>
+      ),
+    },
+    {
+      title: "Order Logistics",
+      subheader: "Tell us a bit about your order...",
+      content: (
+        <div>
+           <OrderLogistics
+        orderLogisticsDetails={orderLogisticsDetails}
+        handleInputChange={handleInputChange}
+      />
+        </div>
+      ),
+    },
+    {
       title: "Style Details",
       content: (
         <div>
           <textarea
             id="styleDetails"
             name="styleDetails"
-            value={formData.styleDetails}
+            // value={formData.styleDetails}
             onChange={(e) => handleInputChange(e)}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
@@ -238,7 +332,7 @@ const TastyEditsForm = () => {
           <textarea
             id="orderDetails"
             name="orderDetails"
-            value={formData.orderDetails}
+            // value={formData.orderDetails}
             onChange={(e) => handleInputChange(e)}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
@@ -294,7 +388,9 @@ const TastyEditsForm = () => {
       ),
     },
   ];
-
+  const filteredSteps = steps.filter(
+    (step) => step.title !== "Addons" && step.title !== "Video Footage"
+  );
   return (
     <div className="container mx-auto flex items-start justify-start h-full">
       <div className="w-1/4 p-4 flex flex-col gap-5 items-center justify-between">
@@ -311,24 +407,43 @@ const TastyEditsForm = () => {
             </h3>
           </div>
           <ul className="space-y-4">
-            {steps.map((step, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <div
-                  className={`rounded-full h-4 w-4 ${
-                    currentStep === index + 1 ? "bg-amber-500" : "bg-white"
-                  }`}
-                ></div>
-                <li
-                  className={`p-2 rounded ${
-                    currentStep === index + 1
-                      ? "text-white font-bold"
-                      : "text-white/80 font-extralight"
-                  }`}
-                >
-                  {step.title}
-                </li>
-              </div>
-            ))}
+            {formData.orderType == "thumbnail"
+              ? filteredSteps.map((step, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <div
+                      className={`rounded-full h-4 w-4 ${
+                        currentStep === index + 1 ? "bg-amber-500" : "bg-white"
+                      }`}
+                    ></div>
+                    <li
+                      className={`p-2 rounded ${
+                        currentStep === index + 1
+                          ? "text-white font-bold"
+                          : "text-white/80 font-extralight"
+                      }`}
+                    >
+                      {step.title}
+                    </li>
+                  </div>
+                ))
+              : steps.map((step, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <div
+                      className={`rounded-full h-4 w-4 ${
+                        currentStep === index + 1 ? "bg-amber-500" : "bg-white"
+                      }`}
+                    ></div>
+                    <li
+                      className={`p-2 rounded ${
+                        currentStep === index + 1
+                          ? "text-white font-bold"
+                          : "text-white/80 font-extralight"
+                      }`}
+                    >
+                      {step.title}
+                    </li>
+                  </div>
+                ))}
           </ul>
         </div>
         <div className="flex flex-row items-center justify-center gap-4">
@@ -346,19 +461,33 @@ const TastyEditsForm = () => {
 
       <div className="w-2.5/4 flex flex-col justify-between container">
         <form onSubmit={handleSubmit} className="my-4">
-          {steps.map((step, index) => (
-            <div key={index}>
-              {currentStep === index + 1 && (
-                <>
-                  <h1 className="text-3xl font-extrabold text-white mb-2">
-                    {step.title}
-                  </h1>
-                  <p className="text-gray-200 mb-4">{step.subheader}</p>
-                  <div className="step-content">{step.content}</div>
-                </>
-              )}
-            </div>
-          ))}
+          {formData.orderType == "thumbnail"
+            ? filteredSteps.map((step, index) => (
+                <div key={index}>
+                  {currentStep === index + 1 && (
+                    <>
+                      <h1 className="text-3xl font-extrabold text-white mb-2">
+                        {step.title}
+                      </h1>
+                      <p className="text-gray-200 mb-4">{step.subheader}</p>
+                      <div className="step-content">{step.content}</div>
+                    </>
+                  )}
+                </div>
+              ))
+            : steps.map((step, index) => (
+                <div key={index}>
+                  {currentStep === index + 1 && (
+                    <>
+                      <h1 className="text-3xl font-extrabold text-white mb-2">
+                        {step.title}
+                      </h1>
+                      <p className="text-gray-200 mb-4">{step.subheader}</p>
+                      <div className="step-content">{step.content}</div>
+                    </>
+                  )}
+                </div>
+              ))}
 
           <div className="flex justify-between mt-6">
             {currentStep > 1 && (

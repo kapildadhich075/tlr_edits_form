@@ -1,7 +1,9 @@
+import { count } from "console";
+import { CircleMinus, CirclePlus } from "lucide-react";
 import Image from "next/image";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useState } from "react";
 
-interface InputCardProps {
+interface AddonCardProps {
   // props
   id: string;
   name: string;
@@ -13,7 +15,7 @@ interface InputCardProps {
   image: string;
 }
 
-export const InputCard = ({
+export const AddonCard = ({
   id,
   name,
   value,
@@ -22,7 +24,8 @@ export const InputCard = ({
   checked,
   para,
   image,
-}: InputCardProps) => {
+}: AddonCardProps) => {
+
   return (
     <div
       className={`
@@ -43,7 +46,8 @@ export const InputCard = ({
         <p className="text-gray-500 text-sm">{para}</p>
       </div>
 
-      <div className=" ">
+      <div className=" flex justify-center items-center ">
+
         <input
           type="radio"
           id={id}
