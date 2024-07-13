@@ -12,6 +12,13 @@ import { ADDONS } from "../constants/Addons";
 import { AddonCard } from "./AddonCard";
 import { Content } from "next/font/google";
 import OrderLogistics from "./OrderLogistics";
+import OrderType from "./OrderTypes";
+import VideoFootage from "./VideoFootage";
+import Addons from "./Addons";
+import StyleDetails from "./StyleDetails";
+import OrderDetails from "./OrderDetails";
+import FootageUpload from "./FootageUpload";
+import ReviewOrder from "./ReviewOrder";
 
 interface VideoFootageDetails {
   length: string;
@@ -27,10 +34,10 @@ interface OrderLogisticsDetails {
 interface FORM_DATA {
   orderType: string;
   videoFootageDetails: VideoFootageDetails;
-  Addons: String;
+  Addons: string;
   orderLogisticsDetails: OrderLogisticsDetails;
-  styleDetails: String;
-  orderDetails: String;
+  styleDetails: string;
+  orderDetails: string;
   footageUpload: File | null;
 }
 const TastyEditsForm = () => {
@@ -141,7 +148,13 @@ const TastyEditsForm = () => {
       case 3:
         return formData.Addons !== "";
       case 4:
-        const { videoTitle, videoCategory, videoDescription, publishDate, finalLength } = formData.orderLogisticsDetails;
+        const {
+          videoTitle,
+          videoCategory,
+          videoDescription,
+          publishDate,
+          finalLength,
+        } = formData.orderLogisticsDetails;
         return (
           videoTitle !== "" &&
           videoCategory !== "" &&
@@ -152,7 +165,7 @@ const TastyEditsForm = () => {
       case 5:
         return formData.styleDetails !== "";
       case 6:
-        return formData.orderDetails !== "";  
+        return formData.orderDetails !== "";
       case 7:
         return formData.footageUpload !== null;
       default:
@@ -167,32 +180,13 @@ const TastyEditsForm = () => {
       subheader:
         "Please select one of the following options to start your order!",
       content: (
-        <div className="grid grid-cols-3 gap-4">
-          {ORDER_TYPES.map((card, index) => (
-            <InputCard
-              key={index}
-              id={card.id}
-              name="orderType"
-              value={card.value}
-              checked={formData.orderType === card.value}
-              onChange={(e) => handleInputChange(e)}
-              label={card.label}
-              para={card.para}
-              image={card.image}
-            />
-          ))}
-          <div onClick={() => setOpenModal(true)} className="cursor-pointer">
-            <InputCard
-              id="orderType-other"
-              name="orderType"
-              value="other"
-              checked={formData.orderType === "other"}
-              onChange={(e) => handleInputChange(e)}
-              label="Other"
-              para="Any other type of video editing that doesn't fit the above categories."
-              image="/other.png"
-            />
-          </div>
+        <div>
+          <OrderType
+            ORDER_TYPES={ORDER_TYPES}
+            formData={formData}
+            handleInputChange={handleInputChange}
+            setOpenModal={setOpenModal}
+          />
         </div>
       ),
     },
@@ -201,99 +195,23 @@ const TastyEditsForm = () => {
       header: "Video Footage Details",
       subheader: "Please select your preferred Video Footage Details option.",
       content: (
-        <div className="mb-4 flex flex-col gap-3">
-          {[
-            {
-              label: "Select Raw Footage Length *",
-              id: "videoFootageDetails.length",
-              options: [
-                { value: "", text: "How Long is your raw footage in minutes" },
-                {
-                  value: "less-than-90",
-                  text: "Less than 90 minutes of raw footage.",
-                },
-                {
-                  value: "90-to-180",
-                  text: "Between 90 and 180 minutes of raw footage.",
-                },
-                {
-                  value: "more-than-180",
-                  text: "More than 180 minutes of raw footage.",
-                },
-              ],
-            },
-            {
-              label: "Select Raw Footage Size *",
-              id: "videoFootageDetails.size",
-              options: [
-                { value: "", text: "How Long is your Raw Footage Size in GB" },
-                {
-                  value: "less-than-20gb",
-                  text: "Less than 20GB of raw footage.",
-                },
-                {
-                  value: "20gb-to-60gb",
-                  text: "Between 20GB and 60GB of raw footage.",
-                },
-                {
-                  value: "more-than-60gb",
-                  text: "More than 60GB of raw footage.",
-                },
-              ],
-            },
-          ].map((selectData, index) => (
-            <div key={index}>
-              <label htmlFor={selectData.id} className="text-white">
-                {selectData.label}
-              </label>
-              <select
-                id={selectData.id}
-                name={selectData.id}
-                value={
-                  videoFootageDetails[
-                    selectData.id.split(
-                      "."
-                    )[1] as keyof typeof videoFootageDetails
-                  ]
-                }
-                onChange={(e) => handleSelectChange(e)}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              >
-                <option disabled value="">
-                  How Long is your raw footage in minutes
-                </option>
-                {selectData.options.map((option, i) => (
-                  <option
-                    key={i}
-                    value={option.value}
-                    className="text-gray-300"
-                  >
-                    {option.text}
-                  </option>
-                ))}
-              </select>
-            </div>
-          ))}
+        <div>
+          <VideoFootage
+            videoFootageDetails={videoFootageDetails}
+            handleSelectChange={handleSelectChange}
+          />
         </div>
       ),
     },
     {
       title: "Addons",
       content: (
-        <div className="grid grid-cols-3 gap-4">
-          {ADDONS.map((card, index) => (
-            <AddonCard
-              key={index}
-              id={card.id}
-              name="Addons"
-              value={card.value}
-              checked={formData.Addons == card.value}
-              onChange={(e) => handleInputChange(e)}
-              label={card.label}
-              para={card.para}
-              image={card.image}
-            />
-          ))}
+        <div>
+          <Addons
+            ADDONS={ADDONS}
+            formData={formData}
+            handleInputChange={(e) => handleInputChange(e)}
+          />
         </div>
       ),
     },
@@ -302,10 +220,10 @@ const TastyEditsForm = () => {
       subheader: "Tell us a bit about your order...",
       content: (
         <div>
-           <OrderLogistics
-        orderLogisticsDetails={orderLogisticsDetails}
-        handleInputChange={handleInputChange}
-      />
+          <OrderLogistics
+            orderLogisticsDetails={orderLogisticsDetails}
+            handleInputChange={handleInputChange}
+          />
         </div>
       ),
     },
@@ -313,12 +231,9 @@ const TastyEditsForm = () => {
       title: "Style Details",
       content: (
         <div>
-          <textarea
-            id="styleDetails"
-            name="styleDetails"
-            // value={formData.styleDetails}
-            onChange={(e) => handleInputChange(e)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          <StyleDetails
+            formData={formData.styleDetails}
+            handleInputChange={(e) => handleInputChange(e)}
           />
         </div>
       ),
@@ -329,12 +244,9 @@ const TastyEditsForm = () => {
       subheader: "Please provide any additional details about your order.",
       content: (
         <div>
-          <textarea
-            id="orderDetails"
-            name="orderDetails"
-            // value={formData.orderDetails}
-            onChange={(e) => handleInputChange(e)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          <OrderDetails
+            formData={formData.orderDetails}
+            handleInputChange={(e) => handleInputChange(e)}
           />
         </div>
       ),
@@ -345,14 +257,7 @@ const TastyEditsForm = () => {
       subheader: "Please upload the footage you want us to edit.",
       content: (
         <div>
-          <input
-            type="file"
-            id="footageUpload"
-            name="footageUpload"
-            accept=".mp4, .mov, .avi, .jpg, .png, .jpeg"
-            onChange={handleFileUpload}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
+          <FootageUpload handleFileUpload={handleFileUpload} />
         </div>
       ),
     },
@@ -361,29 +266,8 @@ const TastyEditsForm = () => {
       header: "Review Order",
       subheader: "Please review your order details before submitting.",
       content: (
-        <div className="text-white">
-          <div className="mb-2">
-            <span className="font-bold">Order Type:</span> {formData.orderType}
-          </div>
-          <div className="mb-2">
-            <span className="font-bold">videoFootageDetails:</span>{" "}
-            {formData.videoFootageDetails.length} -
-            {formData.videoFootageDetails.size}
-          </div>
-          <div className="mb-2">
-            <span className="font-bold">Style Details:</span>{" "}
-            {formData.styleDetails}
-          </div>
-          <div className="mb-2">
-            <span className="font-bold">Order Details:</span>{" "}
-            {formData.orderDetails}
-          </div>
-          <div className="mb-2">
-            <span className="font-bold">Footage Upload:</span>{" "}
-            {formData.footageUpload
-              ? formData.footageUpload["name"]
-              : "No file selected"}
-          </div>
+        <div>
+          <ReviewOrder formData={formData} />
         </div>
       ),
     },
