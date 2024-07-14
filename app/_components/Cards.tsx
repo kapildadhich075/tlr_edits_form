@@ -1,16 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { InputCard } from "./InputCard";
 import { ClerkLoaded, ClerkLoading, UserButton } from "@clerk/nextjs";
-import { Loader2, X } from "lucide-react";
-import { InlineWidget } from "react-calendly";
 import { ORDER_TYPES } from "../constants/OrderType";
 import { ADDONS } from "../constants/Addons";
-import { AddonCard } from "./AddonCard";
-import { Content } from "next/font/google";
 import OrderLogistics from "./OrderLogistics";
 import OrderType from "./OrderTypes";
 import VideoFootage from "./VideoFootage";
@@ -19,42 +13,29 @@ import StyleDetails from "./StyleDetails";
 import OrderDetails from "./OrderDetails";
 import FootageUpload from "./FootageUpload";
 import ReviewOrder from "./ReviewOrder";
+import {
+  FORM_DATA,
+  OrderLogisticsDetails,
+  VideoFootageDetails,
+} from "../constants/blueprints";
+import CalendlyModal from "./CalendlyModal";
+import { Loader2 } from "lucide-react";
 
-interface VideoFootageDetails {
-  length: string;
-  size: string;
-}
-interface OrderLogisticsDetails {
-  videoTitle: String;
-  videoCategory: String;
-  videoDescription: String;
-  publishDate: String;
-  finalLength: Number;
-}
-interface FORM_DATA {
-  orderType: string;
-  videoFootageDetails: VideoFootageDetails;
-  Addons: string;
-  orderLogisticsDetails: OrderLogisticsDetails;
-  styleDetails: string;
-  orderDetails: string;
-  footageUpload: File | null;
-}
-const TastyEditsForm = () => {
-  const router = useRouter();
-
+const TLREditsForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
-  const [orderLogisticsDetails, setOrderLoigisticDetails] = useState({
-    videoTitle: "",
-    videoCategory: "",
-    videoDescription: "",
-    publishDate: "",
-    finalLength: 0,
-  });
-  const [videoFootageDetails, setVideoFootageDetails] = useState({
-    length: "",
-    size: "",
-  });
+  const [orderLogisticsDetails, setOrderLogisticsDetails] =
+    useState<OrderLogisticsDetails>({
+      videoTitle: "",
+      videoCategory: "",
+      videoDescription: "",
+      publishDate: "",
+      finalLength: 0,
+    });
+  const [videoFootageDetails, setVideoFootageDetails] =
+    useState<VideoFootageDetails>({
+      length: "",
+      size: "",
+    });
   const [formData, setFormData] = useState<FORM_DATA>({
     orderType: "",
     videoFootageDetails: videoFootageDetails,
@@ -90,18 +71,6 @@ const TastyEditsForm = () => {
         [name.split(".")[1]]: value,
       },
     }));
-
-    setOrderLoigisticDetails((prevDetails) => ({
-      ...prevDetails,
-      [name.split(".")[1]]: value,
-    }));
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      orderLogisticsDetails: {
-        ...prevFormData.orderLogisticsDetails,
-        [name.split(".")[1]]: value,
-      },
-    }));
   };
 
   const handleInputChange = (
@@ -111,13 +80,38 @@ const TastyEditsForm = () => {
   ) => {
     const { name, value } = event.target;
 
-    setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+    setOrderLogisticsDetails((prevDetails) => ({
+      ...prevDetails,
+      [name]: value,
+    }));
 
-    setOrderLoigisticDetails((prevFormData) => ({
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      orderLogisticsDetails: {
+        ...prevFormData.orderLogisticsDetails,
+        [name]: value,
+      },
+    }));
+  };
+
+  const handleAddonChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+
+    setFormData((prevFormData) => ({
       ...prevFormData,
       [name]: value,
     }));
-    console.log(orderLogisticsDetails);
+  };
+
+  const handleOrderTypeChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { name, value } = event.target;
+
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
   };
 
   const handleFileUpload = (event: any) => {
@@ -137,6 +131,9 @@ const TastyEditsForm = () => {
   };
 
   const isCurrentStepValid = () => {
+    console.log("Current Step:", currentStep);
+    console.log("Order Logistics Details:", formData.orderLogisticsDetails);
+
     switch (currentStep) {
       case 1:
         return formData.orderType !== "";
@@ -145,23 +142,15 @@ const TastyEditsForm = () => {
           formData.videoFootageDetails.length &&
           formData.videoFootageDetails.size
         );
-      case 3:
-        return formData.Addons !== "";
       case 4:
-        const {
-          videoTitle,
-          videoCategory,
-          videoDescription,
-          publishDate,
-          finalLength,
-        } = formData.orderLogisticsDetails;
-        return (
-          videoTitle !== "" &&
-          videoCategory !== "" &&
-          videoDescription !== "" &&
-          publishDate !== "" &&
-          finalLength !== 0
-        );
+        const isValid =
+          formData.orderLogisticsDetails.videoTitle &&
+          formData.orderLogisticsDetails.videoDescription &&
+          formData.orderLogisticsDetails.videoCategory &&
+          formData.orderLogisticsDetails.publishDate &&
+          formData.orderLogisticsDetails.finalLength;
+        console.log("Step 4 Validity:", isValid);
+        return isValid;
       case 5:
         return formData.styleDetails !== "";
       case 6:
@@ -184,7 +173,7 @@ const TastyEditsForm = () => {
           <OrderType
             ORDER_TYPES={ORDER_TYPES}
             formData={formData}
-            handleInputChange={handleInputChange}
+            handleInputChange={handleOrderTypeChange}
             setOpenModal={setOpenModal}
           />
         </div>
@@ -210,7 +199,7 @@ const TastyEditsForm = () => {
           <Addons
             ADDONS={ADDONS}
             formData={formData}
-            handleInputChange={(e) => handleInputChange(e)}
+            handleInputChange={(e) => handleAddonChange(e)}
           />
         </div>
       ),
@@ -221,8 +210,8 @@ const TastyEditsForm = () => {
       content: (
         <div>
           <OrderLogistics
-            orderLogisticsDetails={orderLogisticsDetails}
             handleInputChange={handleInputChange}
+            orderLogisticsDetails={orderLogisticsDetails}
           />
         </div>
       ),
@@ -272,9 +261,11 @@ const TastyEditsForm = () => {
       ),
     },
   ];
+
   const filteredSteps = steps.filter(
     (step) => step.title !== "Addons" && step.title !== "Video Footage"
   );
+
   return (
     <div className="container mx-auto flex items-start justify-start h-full">
       <div className="w-1/4 p-4 flex flex-col gap-5 items-center justify-between">
@@ -330,74 +321,51 @@ const TastyEditsForm = () => {
                 ))}
           </ul>
         </div>
-        <div className="flex flex-row items-center justify-center gap-4">
-          <div className="flex flex-col items-center justify-center gap-4">
-            <ClerkLoaded>
-              <UserButton afterSignOutUrl="/" />
-            </ClerkLoaded>
-            <ClerkLoading>
-              <Loader2 className="size-8 text-slate-400 animate-spin" />
-            </ClerkLoading>
-          </div>
+        <div className="flex flex-col items-center gap-4">
+          <ClerkLoading>
+            <Loader2 size={32} className=" text-white animate-spin" />
+          </ClerkLoading>
+          <ClerkLoaded>
+            <UserButton />
+          </ClerkLoaded>
         </div>
-        <p className="text-white text-xs">&copy; 2024 TLR Edits.</p>
       </div>
-
-      <div className="w-2.5/4 flex flex-col justify-between container">
-        <form onSubmit={handleSubmit} className="my-4">
-          {formData.orderType == "thumbnail"
-            ? filteredSteps.map((step, index) => (
-                <div key={index}>
-                  {currentStep === index + 1 && (
-                    <>
-                      <h1 className="text-3xl font-extrabold text-white mb-2">
-                        {step.title}
-                      </h1>
-                      <p className="text-gray-200 mb-4">{step.subheader}</p>
-                      <div className="step-content">{step.content}</div>
-                    </>
-                  )}
-                </div>
-              ))
-            : steps.map((step, index) => (
-                <div key={index}>
-                  {currentStep === index + 1 && (
-                    <>
-                      <h1 className="text-3xl font-extrabold text-white mb-2">
-                        {step.title}
-                      </h1>
-                      <p className="text-gray-200 mb-4">{step.subheader}</p>
-                      <div className="step-content">{step.content}</div>
-                    </>
-                  )}
-                </div>
-              ))}
-
-          <div className="flex justify-between mt-6">
-            {currentStep > 1 && (
-              <button
-                type="button"
-                onClick={prevStep}
-                className="bg-slate-600 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus-shadow-outline"
-              >
-                Previous
-              </button>
-            )}
-            {currentStep < steps.length && (
+      <div className="relative w-3/4 p-4">
+        {openModal && <CalendlyModal onClick={() => setOpenModal(false)} />}
+        <form onSubmit={handleSubmit} className="w-full flex flex-col gap-6">
+          <div className="text-start">
+            <h1 className="text-2xl font-semibold text-white mb-2">
+              {steps[currentStep - 1].header}
+            </h1>
+            <p className="text-white">{steps[currentStep - 1].subheader}</p>
+          </div>
+          {steps[currentStep - 1].content}
+          <div className="flex justify-between gap-4">
+            <button
+              type="button"
+              onClick={prevStep}
+              className={`${
+                currentStep === 1 ? "opacity-50 cursor-not-allowed" : ""
+              } px-4 py-2 bg-gray-500 text-white rounded`}
+              disabled={currentStep === 1}
+            >
+              Previous
+            </button>
+            {currentStep < steps.length ? (
               <button
                 type="button"
                 onClick={nextStep}
-                className="bg-orange-400 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus-shadow-outline"
+                className={`${
+                  !isCurrentStepValid() ? "opacity-50 cursor-not-allowed" : ""
+                } px-4 py-2 bg-blue-500 text-white rounded`}
                 disabled={!isCurrentStepValid()}
               >
                 Next
               </button>
-            )}
-            {currentStep === steps.length && (
+            ) : (
               <button
                 type="submit"
-                className="bg-amber-500 hover:bg-amber-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus-shadow-outline"
-                disabled={!isCurrentStepValid()}
+                className="px-4 py-2 bg-green-500 text-white rounded"
               >
                 Submit
               </button>
@@ -405,27 +373,8 @@ const TastyEditsForm = () => {
           </div>
         </form>
       </div>
-
-      {openModal && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg p-6 relative">
-            <button
-              onClick={() => setOpenModal(false)}
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-            >
-              <X />
-            </button>
-            <h2 className="text-xl font-bold mb-4">Custom Order Request</h2>
-            <p className="text-gray-700 mb-4">
-              Your order requires a custom quote. Click the button below to
-              schedule a call with our team.
-            </p>
-            <InlineWidget url="https://calendly.com/info-thelectureroom" />
-          </div>
-        </div>
-      )}
     </div>
   );
 };
 
-export default TastyEditsForm;
+export default TLREditsForm;

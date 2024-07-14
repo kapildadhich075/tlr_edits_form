@@ -11,6 +11,7 @@ interface InputCardProps {
   checked: boolean;
   para: string;
   image: string;
+  onClick?: () => void;
 }
 
 export const InputCard = ({
@@ -22,6 +23,7 @@ export const InputCard = ({
   checked,
   para,
   image,
+  onClick,
 }: InputCardProps) => {
   return (
     <div
@@ -31,6 +33,7 @@ export const InputCard = ({
         
         `}
       data-testid="input-card"
+      onClick={onClick}
     >
       <div className="flex items-center flex-col text-center gap-5">
         <Image src={image} alt="video" width={60} height={60} />

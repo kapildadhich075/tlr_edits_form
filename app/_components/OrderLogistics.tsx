@@ -1,23 +1,19 @@
-import React from 'react';
-
-interface OrderLogisticsDetails {
-  videoTitle: string;
-  videoCategory: string;
-  videoDescription: string;
-  publishDate: string;
-  finalLength: number;
-}
+import React from "react";
+import { OrderLogisticsDetails } from "../constants/blueprints";
 
 interface OrderLogisticsProps {
   orderLogisticsDetails: OrderLogisticsDetails;
-  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  handleInputChange: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
 }
 
-const OrderLogistics: React.FC<OrderLogisticsProps> = ({ orderLogisticsDetails, handleInputChange }) => {
+const OrderLogistics: React.FC<OrderLogisticsProps> = ({
+  orderLogisticsDetails,
+  handleInputChange,
+}) => {
   return (
     <div>
-      <h2 className="subheader">Tell us a bit about your order...</h2>
-      
       <div>
         <h1 className="text-white">Video Title*</h1>
         <input
@@ -29,7 +25,7 @@ const OrderLogistics: React.FC<OrderLogisticsProps> = ({ orderLogisticsDetails, 
           required
         />
       </div>
-      
+
       <div>
         <h1 className="text-white">Video Category*</h1>
         <input
@@ -41,7 +37,7 @@ const OrderLogistics: React.FC<OrderLogisticsProps> = ({ orderLogisticsDetails, 
           required
         />
       </div>
-      
+
       <div>
         <h1 className="text-white">Video Description*</h1>
         <textarea
@@ -53,7 +49,7 @@ const OrderLogistics: React.FC<OrderLogisticsProps> = ({ orderLogisticsDetails, 
           required
         />
       </div>
-      
+
       <div>
         <h1 className="text-white">Publish Date*</h1>
         <input
@@ -66,7 +62,7 @@ const OrderLogistics: React.FC<OrderLogisticsProps> = ({ orderLogisticsDetails, 
           required
         />
       </div>
-      
+
       <div>
         <h1 className="text-white">Final Length*</h1>
         <input
