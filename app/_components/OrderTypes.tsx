@@ -51,9 +51,6 @@ const OrderType: React.FC<OrderTypeProps> = ({
           image="/other.png"
           onClick={() => setOpenModal(true)}
         />
-        {/* <div onClick={() => setOpenModal(true)} className="cursor-pointer">
-          
-        </div> */}
       </div>
     </div>
   );

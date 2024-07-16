@@ -15,7 +15,9 @@ import FootageUpload from "./FootageUpload";
 import ReviewOrder from "./ReviewOrder";
 import {
   FORM_DATA,
+  OrderDetail,
   OrderLogisticsDetails,
+  StyleDetail,
   VideoFootageDetails,
 } from "../constants/blueprints";
 import CalendlyModal from "./CalendlyModal";
@@ -23,6 +25,11 @@ import { Loader2 } from "lucide-react";
 
 const TLREditsForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
+  const [orderDetail, setOrderDetail] = useState<OrderDetail>({
+    richTextData: "",
+    slug: "",
+    scriptLink: "",
+  })
   const [orderLogisticsDetails, setOrderLogisticsDetails] =
     useState<OrderLogisticsDetails>({
       videoTitle: "",
@@ -36,13 +43,17 @@ const TLREditsForm = () => {
       length: "",
       size: "",
     });
+    const [style, setStyle] = useState<StyleDetail>({
+      pace: "",
+      tone: [],
+    });
   const [formData, setFormData] = useState<FORM_DATA>({
     orderType: "",
     videoFootageDetails: videoFootageDetails,
     Addons: "",
     orderLogisticsDetails: orderLogisticsDetails,
-    styleDetails: "",
-    orderDetails: "",
+    styleDetails: style,
+    orderDetails: orderDetail,
     footageUpload: null,
   });
 
@@ -103,6 +114,51 @@ const TLREditsForm = () => {
     }));
   };
 
+  const handleStyleDetail = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, checked } = event.target;
+  
+    setStyle((prevStyle) => {
+      if (name === 'tone') {
+        const newTone = checked
+          ? [...prevStyle.tone, value]
+          : prevStyle.tone.filter((tone) => tone !== value);
+        return { ...prevStyle, tone: newTone };
+      } else {
+        return { ...prevStyle, [name]: value };
+      }
+    });
+  
+    setFormData((prevFormData) => {
+      if (name === 'tone') {
+        const newTone = checked
+          ? [...prevFormData.styleDetails.tone, value]
+          : prevFormData.styleDetails.tone.filter((tone) => tone !== value);
+        return { ...prevFormData, styleDetails: { ...prevFormData.styleDetails, tone: newTone } };
+      } else {
+        return { ...prevFormData, styleDetails: { ...prevFormData.styleDetails, [name]: value } };
+      }
+    });
+  };
+  
+  const handleOrderDetail = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { name, value } = event.target;
+
+    setOrderDetail((prevOrderDetail) => ({
+      ...prevOrderDetail,
+      [name]: value,
+    }));
+
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      orderDetails: {
+        ...prevFormData.orderDetails,
+        [name]: value,
+      },
+    }));
+  }
+
   const handleOrderTypeChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -152,9 +208,8 @@ const TLREditsForm = () => {
         console.log("Step 4 Validity:", isValid);
         return isValid;
       case 5:
-        return formData.styleDetails !== "";
-      case 6:
-        return formData.orderDetails !== "";
+        return formData.styleDetails.pace && formData.styleDetails.tone;
+      
       case 7:
         return formData.footageUpload !== null;
       default:
@@ -218,13 +273,15 @@ const TLREditsForm = () => {
     },
     {
       title: "Style Details",
+      header: "Style Details",
+      subheader: "Please provide any additional details about your style.",
       content: (
         <div>
-          <StyleDetails
-            formData={formData.styleDetails}
-            handleInputChange={(e) => handleInputChange(e)}
-          />
-        </div>
+      <StyleDetails
+        formData={formData.styleDetails}
+        handleInputChange={handleStyleDetail}
+      />
+    </div>
       ),
     },
     {
@@ -235,8 +292,8 @@ const TLREditsForm = () => {
         <div>
           <OrderDetails
             formData={formData.orderDetails}
-            handleInputChange={(e) => handleInputChange(e)}
-          />
+            handleInputChange={()=>handleOrderDetail}
+/>
         </div>
       ),
     },
@@ -267,8 +324,8 @@ const TLREditsForm = () => {
   );
 
   return (
-    <div className="container mx-auto flex items-start justify-start h-full">
-      <div className="w-1/4 p-4 flex flex-col gap-5 items-center justify-between">
+    <div className="container flex items-start justify-start h-full">
+      <div className="w-1/4 p-4 flex flex-col gap-5 items-center justify-evenly h-96">
         <div className="sticky top-4">
           <div className="flex items-end gap-1 mb-10">
             <Image

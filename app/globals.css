@@ -9,3 +9,18 @@
   overflow-y: auto;
   padding-bottom: 50px; /* Ensure content is not hidden behind fixed footer */
 }
+
+
+.ql-toolbar {
+  background-color: #f3f3f3; /* Your desired toolbar background color */
+  color: white; /* Text color for toolbar icons */
+  border-radius: 10px;
+}
+
+.ql-toolbar button {
+  color: white; /* Text color for toolbar buttons */
+}
+
+.ql-toolbar button:hover {
+  color: yellow; /* Text color for toolbar buttons on hover */
+}

@@ -1,16 +1,8 @@
 import React from 'react';
+import { FORM_DATA } from '../constants/blueprints';
 
 interface ReviewOrderProps {
-  formData: {
-    orderType: string;
-    videoFootageDetails: {
-      length: string;
-      size: string;
-    };
-    styleDetails: string;
-    orderDetails: string;
-    footageUpload: File | null;
-  };
+  formData: FORM_DATA
 }
 
 const ReviewOrder: React.FC<ReviewOrderProps> = ({ formData }) => {
@@ -24,10 +16,18 @@ const ReviewOrder: React.FC<ReviewOrderProps> = ({ formData }) => {
         {formData.videoFootageDetails.length} - {formData.videoFootageDetails.size}
       </div>
       <div className="mb-2">
-        <span className="font-bold">Style Details:</span> {formData.styleDetails}
+        <span className="font-bold">Style Details:</span> {
+          formData.styleDetails.pace
+        } - {
+          formData.styleDetails.tone
+        }
       </div>
       <div className="mb-2">
-        <span className="font-bold">Order Details:</span> {formData.orderDetails}
+        <span className="font-bold">Order Details:</span> {formData.orderDetails.richTextData} - {
+          formData.orderDetails.slug
+        } - {
+          formData.orderDetails.scriptLink
+        }
       </div>
       <div className="mb-2">
         <span className="font-bold">Footage Upload:</span>{' '}

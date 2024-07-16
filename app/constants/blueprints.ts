@@ -14,7 +14,18 @@ export interface FORM_DATA {
   videoFootageDetails: VideoFootageDetails;
   Addons: string;
   orderLogisticsDetails: OrderLogisticsDetails;
-  styleDetails: string;
-  orderDetails: string;
+  styleDetails: StyleDetail;
+  orderDetails: OrderDetail;
   footageUpload: File | null;
+}
+
+export interface StyleDetail {
+  pace: string;
+  tone: string[];
+}
+
+export interface OrderDetail {
+    richTextData: string;
+    slug: string;
+    scriptLink: string; 
 }
