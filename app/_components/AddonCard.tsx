@@ -1,10 +1,7 @@
-import { count } from "console";
-import { CircleMinus, CirclePlus } from "lucide-react";
+import { ChangeEvent } from "react";
 import Image from "next/image";
-import { ChangeEvent, useState } from "react";
 
 interface AddonCardProps {
-  // props
   id: string;
   name: string;
   value: string;
@@ -25,20 +22,18 @@ export const AddonCard = ({
   para,
   image,
 }: AddonCardProps) => {
-
   return (
     <div
       className={`
-      mb-4 container mx-auto p-4 bg-[#f2f2f2] rounded-lg h-auto flex flex-col justify-center items-center gap-5
+        mb-4 container mx-auto p-4 bg-[#f2f2f2] rounded-lg h-auto flex flex-col justify-center items-center gap-5
         ${checked ? " bg-amber-100 shadow-inner" : "bg-gray-100 shadow-xl"}
-        
-        `}
+      `}
       data-testid="input-card"
     >
       <div className="flex items-center flex-col text-center gap-5">
         <Image src={image} alt="video" width={60} height={60} />
         <label
-          htmlFor="orderType-video"
+          htmlFor={id}
           className="ml-3 text-gray-700 text-lg font-semibold"
         >
           {label}
@@ -47,17 +42,18 @@ export const AddonCard = ({
       </div>
 
       <div className=" flex justify-center items-center ">
-
         <input
-          type="radio"
+          type="checkbox"
           id={id}
           name={name}
           value={value}
           checked={checked}
           onChange={onChange}
-          className="form-radio h-4 w-4 text-indigo-500 focus:ring-indigo-500"
+          className="form-checkbox h-4 w-4 text-indigo-500 focus:ring-indigo-500"
         />
       </div>
     </div>
   );
 };
+
+export default AddonCard;

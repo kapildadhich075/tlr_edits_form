@@ -2,11 +2,14 @@
 
 import React from "react";
 import TLREditsForm from "../_components/Cards";
+import { AddonProvider } from "../_components/AddonContext";
 
 const HomePage = () => {
   return (
     <>
-      <TLREditsForm />
+      <AddonProvider>
+        <TLREditsForm />
+      </AddonProvider>
     </>
   );
 };

@@ -13,15 +13,17 @@ const PaceData = [
   { label: 'Fast', value: 'fast' },
 ];
 
+
 const ToneData = [
-  { label: 'Funny', value: 'funny' },
-  { label: 'Serious', value: 'serious' },
-  { label: 'Professional', value: 'professional' },
-  { label: 'Elegant', value: 'elegant' },
-  { label: 'Casual', value: 'casual' },
-  { label: 'Informational', value: 'informational' },
-  { label: 'Entertaining', value: 'entertaining' },
+  { label: "Funny", value: "funny" },
+  { label: "Serious", value: "serious" },
+  { label: "Professional", value: "professional" },
+  { label: "Elegant", value: "elegant" },
+  { label: "Casual", value: "casual" },
+  { label: "Informational", value: "informational" },
+  { label: "Entertaining", value: "entertaining" },
 ];
+
 
 const StyleDetails: React.FC<StyleDetailsProps> = ({ formData, handleInputChange }) => {
   return (

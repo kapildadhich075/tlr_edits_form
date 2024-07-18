@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { TextareaHTMLAttributes, useState } from "react";
 import Image from "next/image";
 import { ClerkLoaded, ClerkLoading, UserButton } from "@clerk/nextjs";
 import { ORDER_TYPES } from "../constants/OrderType";
@@ -14,6 +14,7 @@ import OrderDetails from "./OrderDetails";
 import FootageUpload from "./FootageUpload";
 import ReviewOrder from "./ReviewOrder";
 import {
+  AddonDetail,
   FORM_DATA,
   OrderDetail,
   OrderLogisticsDetails,
@@ -22,6 +23,8 @@ import {
 } from "../constants/blueprints";
 import CalendlyModal from "./CalendlyModal";
 import { Loader2 } from "lucide-react";
+import AddonDetails from "./AddonDetails";
+import { AddonProvider } from "./AddonContext";
 
 const TLREditsForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -29,7 +32,7 @@ const TLREditsForm = () => {
     richTextData: "",
     slug: "",
     scriptLink: "",
-  })
+  });
   const [orderLogisticsDetails, setOrderLogisticsDetails] =
     useState<OrderLogisticsDetails>({
       videoTitle: "",
@@ -43,14 +46,30 @@ const TLREditsForm = () => {
       length: "",
       size: "",
     });
-    const [style, setStyle] = useState<StyleDetail>({
-      pace: "",
-      tone: [],
-    });
+  const [style, setStyle] = useState<StyleDetail>({
+    pace: "",
+    tone: [],
+  });
+  const [addonDetails, setAddonDetails] = useState<AddonDetail>({
+    tone: [],
+    includeLogo: "",
+    followThumbnail: "",
+    thumbnailDescription: "",
+    verticalReformatGoals: "",
+    verticalReformatExampleVideos: "",
+    squareReformatGoals: "",
+    squareReformatExamples: "",
+    horizontalReformatGoals: "",
+    horizontalReformatExampleVideos: "",
+    captionStyle: "",
+    editingSoftware: "",
+  });
   const [formData, setFormData] = useState<FORM_DATA>({
     orderType: "",
     videoFootageDetails: videoFootageDetails,
     Addons: "",
+    AddonDetails: addonDetails,
+    selectedAddons: [],
     orderLogisticsDetails: orderLogisticsDetails,
     styleDetails: style,
     orderDetails: orderDetail,
@@ -87,10 +106,10 @@ const TLREditsForm = () => {
   const handleInputChange = (
     event: React.ChangeEvent<
       HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement
-    >
+    >,
+    isChecked?: boolean
   ) => {
-    const { name, value } = event.target;
-
+    const { name, value, type } = event.target;
     setOrderLogisticsDetails((prevDetails) => ({
       ...prevDetails,
       [name]: value,
@@ -106,19 +125,81 @@ const TLREditsForm = () => {
   };
 
   const handleAddonChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-
+    const { name, value, checked } = event.target;
     setFormData((prevFormData) => ({
       ...prevFormData,
       [name]: value,
+      selectedAddons: checked
+        ? [...prevFormData.selectedAddons, value]
+        : prevFormData.selectedAddons.filter((addon) => addon !== value),
     }));
+
+    // setFormData((prevFormData) => ({
+    //   ...prevFormData,
+    //   [name]: value,
+    // }));
   };
+
+  // console.log(formData.selectedAddons + "yoyoyyo");
+
+  const handleAddonDetail = (
+    event: React.ChangeEvent<
+      HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement
+    >,
+    isChecked?: boolean
+  ) => {
+    const { name, value, type } = event.target;
+
+    setAddonDetails((prevData) => {
+      if (name === "tone") {
+        const newTone = isChecked
+          ? [...prevData.tone, value]
+          : prevData.tone.filter((tone) => tone !== value);
+        return {
+          ...prevData,
+          tone: newTone,
+        };
+      } else {
+        return {
+          ...prevData,
+          [name]: value,
+        };
+      }
+    });
+
+    setFormData((prevData) => {
+      if (type === "checkbox" && name === "tone") {
+        const updatedTone = isChecked
+          ? [...prevData.AddonDetails.tone, value]
+          : prevData.AddonDetails.tone.filter((tone) => tone !== value);
+        return {
+          ...prevData,
+          AddonDetails: {
+            ...prevData.AddonDetails,
+            tone: updatedTone,
+          },
+        };
+      } else {
+        return {
+          ...prevData,
+          AddonDetails: {
+            ...prevData.AddonDetails,
+            [name]: value,
+          },
+        };
+      }
+    });
+
+    console.log({ [name]: value });
+  };
+  // console.log(formData.AddonDetails);
+  // console.log(formData);
 
   const handleStyleDetail = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, checked } = event.target;
-  
+
     setStyle((prevStyle) => {
-      if (name === 'tone') {
+      if (name === "tone") {
         const newTone = checked
           ? [...prevStyle.tone, value]
           : prevStyle.tone.filter((tone) => tone !== value);
@@ -127,22 +208,26 @@ const TLREditsForm = () => {
         return { ...prevStyle, [name]: value };
       }
     });
-  
+
     setFormData((prevFormData) => {
-      if (name === 'tone') {
+      if (name === "tone") {
         const newTone = checked
           ? [...prevFormData.styleDetails.tone, value]
           : prevFormData.styleDetails.tone.filter((tone) => tone !== value);
-        return { ...prevFormData, styleDetails: { ...prevFormData.styleDetails, tone: newTone } };
+        return {
+          ...prevFormData,
+          styleDetails: { ...prevFormData.styleDetails, tone: newTone },
+        };
       } else {
-        return { ...prevFormData, styleDetails: { ...prevFormData.styleDetails, [name]: value } };
+        return {
+          ...prevFormData,
+          styleDetails: { ...prevFormData.styleDetails, [name]: value },
+        };
       }
     });
   };
-  
-  const handleOrderDetail = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+
+  const handleOrderDetail = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
 
     setOrderDetail((prevOrderDetail) => ({
@@ -157,7 +242,7 @@ const TLREditsForm = () => {
         [name]: value,
       },
     }));
-  }
+  };
 
   const handleOrderTypeChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -188,17 +273,36 @@ const TLREditsForm = () => {
 
   const isCurrentStepValid = () => {
     console.log("Current Step:", currentStep);
-    console.log("Order Logistics Details:", formData.orderLogisticsDetails);
+    // console.log("Order Logistics Details:", formData.orderLogisticsDetails);
 
     switch (currentStep) {
       case 1:
         return formData.orderType !== "";
+
       case 2:
         return (
           formData.videoFootageDetails.length &&
           formData.videoFootageDetails.size
         );
+      case 3:
+        return formData.selectedAddons;
+
       case 4:
+        return (
+          formData.AddonDetails.tone &&
+          formData.AddonDetails.includeLogo !== "" &&
+          formData.AddonDetails.followThumbnail !== "" &&
+          formData.AddonDetails.thumbnailDescription !== "" &&
+          formData.AddonDetails.verticalReformatGoals !== "" &&
+          formData.AddonDetails.verticalReformatExampleVideos !== "" &&
+          formData.AddonDetails.squareReformatGoals !== "" &&
+          formData.AddonDetails.squareReformatExamples !== "" &&
+          formData.AddonDetails.horizontalReformatGoals !== "" &&
+          formData.AddonDetails.horizontalReformatExampleVideos !== "" &&
+          formData.AddonDetails.captionStyle !== "" &&
+          formData.AddonDetails.editingSoftware !== ""
+        );
+      case 5:
         const isValid =
           formData.orderLogisticsDetails.videoTitle &&
           formData.orderLogisticsDetails.videoDescription &&
@@ -206,12 +310,15 @@ const TLREditsForm = () => {
           formData.orderLogisticsDetails.publishDate &&
           formData.orderLogisticsDetails.finalLength;
         console.log("Step 4 Validity:", isValid);
+
         return isValid;
-      case 5:
+
+      case 6:
         return formData.styleDetails.pace && formData.styleDetails.tone;
-      
+
       case 7:
         return formData.footageUpload !== null;
+
       default:
         return true;
     }
@@ -253,9 +360,24 @@ const TLREditsForm = () => {
         <div>
           <Addons
             ADDONS={ADDONS}
-            formData={formData}
-            handleInputChange={(e) => handleAddonChange(e)}
+            formData={formData.AddonDetails}
+            handleInputChange={(e) => handleAddonChange}
           />
+        </div>
+      ),
+    },
+    {
+      title: "Addon Details",
+      header: "Addon Details",
+      subheader: "Give more details about addons.",
+      content: (
+        <div>
+
+            <AddonDetails
+              formData={formData.AddonDetails}
+              handleInputChange={handleAddonDetail}
+            />
+
         </div>
       ),
     },
@@ -277,11 +399,11 @@ const TLREditsForm = () => {
       subheader: "Please provide any additional details about your style.",
       content: (
         <div>
-      <StyleDetails
-        formData={formData.styleDetails}
-        handleInputChange={handleStyleDetail}
-      />
-    </div>
+          <StyleDetails
+            formData={formData.styleDetails}
+            handleInputChange={handleStyleDetail}
+          />
+        </div>
       ),
     },
     {
@@ -292,8 +414,8 @@ const TLREditsForm = () => {
         <div>
           <OrderDetails
             formData={formData.orderDetails}
-            handleInputChange={()=>handleOrderDetail}
-/>
+            handleInputChange={() => handleOrderDetail}
+          />
         </div>
       ),
     },
@@ -321,6 +443,9 @@ const TLREditsForm = () => {
 
   const filteredSteps = steps.filter(
     (step) => step.title !== "Addons" && step.title !== "Video Footage"
+  );
+  const addonDetailsFilterStep = steps.filter(
+    (step) => step.title !== "Addon Details"
   );
 
   return (
