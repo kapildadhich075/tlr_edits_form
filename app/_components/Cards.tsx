@@ -1,6 +1,6 @@
 "use client";
 
-import { TextareaHTMLAttributes, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { ClerkLoaded, ClerkLoading, UserButton } from "@clerk/nextjs";
 import { ORDER_TYPES } from "../constants/OrderType";
@@ -24,7 +24,6 @@ import {
 import CalendlyModal from "./CalendlyModal";
 import { Loader2 } from "lucide-react";
 import AddonDetails from "./AddonDetails";
-import { AddonProvider } from "./AddonContext";
 
 const TLREditsForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -73,7 +72,7 @@ const TLREditsForm = () => {
     orderLogisticsDetails: orderLogisticsDetails,
     styleDetails: style,
     orderDetails: orderDetail,
-    footageUpload: null,
+    footageUpload: "",
   });
 
   const [openModal, setOpenModal] = useState(false);
@@ -133,67 +132,62 @@ const TLREditsForm = () => {
         ? [...prevFormData.selectedAddons, value]
         : prevFormData.selectedAddons.filter((addon) => addon !== value),
     }));
-
-    // setFormData((prevFormData) => ({
-    //   ...prevFormData,
-    //   [name]: value,
-    // }));
   };
-
-  // console.log(formData.selectedAddons + "yoyoyyo");
 
   const handleAddonDetail = (
     event: React.ChangeEvent<
       HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement
-    >,
-    isChecked?: boolean
+    >
   ) => {
     const { name, value, type } = event.target;
 
-    setAddonDetails((prevData) => {
-      if (name === "tone") {
-        const newTone = isChecked
-          ? [...prevData.tone, value]
-          : prevData.tone.filter((tone) => tone !== value);
-        return {
-          ...prevData,
-          tone: newTone,
-        };
-      } else {
-        return {
-          ...prevData,
-          [name]: value,
-        };
-      }
-    });
+    if (type === "checkbox") {
+      const checked = (event.target as HTMLInputElement).checked;
+      setAddonDetails((prevData) => {
+        if (name === "tone") {
+          const newTone = checked
+            ? [...prevData.tone, value]
+            : prevData.tone.filter((tone) => tone !== value);
+          return {
+            ...prevData,
+            tone: newTone,
+          };
+        }
+        return prevData;
+      });
 
-    setFormData((prevData) => {
-      if (type === "checkbox" && name === "tone") {
-        const updatedTone = isChecked
-          ? [...prevData.AddonDetails.tone, value]
-          : prevData.AddonDetails.tone.filter((tone) => tone !== value);
-        return {
-          ...prevData,
-          AddonDetails: {
-            ...prevData.AddonDetails,
-            tone: updatedTone,
-          },
-        };
-      } else {
-        return {
-          ...prevData,
-          AddonDetails: {
-            ...prevData.AddonDetails,
-            [name]: value,
-          },
-        };
-      }
-    });
+      setFormData((prevData) => {
+        if (name === "tone") {
+          const updatedTone = checked
+            ? [...prevData.AddonDetails.tone, value]
+            : prevData.AddonDetails.tone.filter((tone) => tone !== value);
+          return {
+            ...prevData,
+            AddonDetails: {
+              ...prevData.AddonDetails,
+              tone: updatedTone,
+            },
+          };
+        }
+        return prevData;
+      });
+    } else {
+      setAddonDetails((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+
+      setFormData((prevData) => ({
+        ...prevData,
+        AddonDetails: {
+          ...prevData.AddonDetails,
+          [name]: value,
+        },
+      }));
+    }
 
     console.log({ [name]: value });
   };
-  // console.log(formData.AddonDetails);
-  // console.log(formData);
 
   const handleStyleDetail = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, checked } = event.target;
@@ -227,19 +221,33 @@ const TLREditsForm = () => {
     });
   };
 
-  const handleOrderDetail = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleOrderDetail = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = event.target;
-
-    setOrderDetail((prevOrderDetail) => ({
-      ...prevOrderDetail,
+    setOrderDetail((prevDetails) => ({
+      ...prevDetails,
       [name]: value,
     }));
-
     setFormData((prevFormData) => ({
       ...prevFormData,
       orderDetails: {
         ...prevFormData.orderDetails,
         [name]: value,
+      },
+    }));
+  };
+
+  const handleRichTextChange = (content: string) => {
+    setOrderDetail((prevDetails) => ({
+      ...prevDetails,
+      richTextData: content,
+    }));
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      orderDetails: {
+        ...prevFormData.orderDetails,
+        richTextData: content,
       },
     }));
   };
@@ -255,11 +263,12 @@ const TLREditsForm = () => {
     }));
   };
 
-  const handleFileUpload = (event: any) => {
-    const file = event.target.files[0];
-    if (file) {
-      setFormData({ ...formData, footageUpload: file });
-    }
+  const handleVideoDriveLink = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      footageUpload: value,
+    }));
   };
 
   const nextStep = () => setCurrentStep(currentStep + 1);
@@ -272,9 +281,6 @@ const TLREditsForm = () => {
   };
 
   const isCurrentStepValid = () => {
-    console.log("Current Step:", currentStep);
-    // console.log("Order Logistics Details:", formData.orderLogisticsDetails);
-
     switch (currentStep) {
       case 1:
         return formData.orderType !== "";
@@ -286,22 +292,6 @@ const TLREditsForm = () => {
         );
       case 3:
         return formData.selectedAddons;
-
-      case 4:
-        return (
-          formData.AddonDetails.tone &&
-          formData.AddonDetails.includeLogo !== "" &&
-          formData.AddonDetails.followThumbnail !== "" &&
-          formData.AddonDetails.thumbnailDescription !== "" &&
-          formData.AddonDetails.verticalReformatGoals !== "" &&
-          formData.AddonDetails.verticalReformatExampleVideos !== "" &&
-          formData.AddonDetails.squareReformatGoals !== "" &&
-          formData.AddonDetails.squareReformatExamples !== "" &&
-          formData.AddonDetails.horizontalReformatGoals !== "" &&
-          formData.AddonDetails.horizontalReformatExampleVideos !== "" &&
-          formData.AddonDetails.captionStyle !== "" &&
-          formData.AddonDetails.editingSoftware !== ""
-        );
       case 5:
         const isValid =
           formData.orderLogisticsDetails.videoTitle &&
@@ -317,6 +307,13 @@ const TLREditsForm = () => {
         return formData.styleDetails.pace && formData.styleDetails.tone;
 
       case 7:
+        return (
+          formData.orderDetails.richTextData !== "" &&
+          formData.orderDetails.slug !== "" &&
+          formData.orderDetails.scriptLink !== ""
+        );
+
+      case 8:
         return formData.footageUpload !== null;
 
       default:
@@ -372,12 +369,10 @@ const TLREditsForm = () => {
       subheader: "Give more details about addons.",
       content: (
         <div>
-
-            <AddonDetails
-              formData={formData.AddonDetails}
-              handleInputChange={handleAddonDetail}
-            />
-
+          <AddonDetails
+            formData={formData.AddonDetails}
+            handleInputChange={handleAddonDetail}
+          />
         </div>
       ),
     },
@@ -414,7 +409,8 @@ const TLREditsForm = () => {
         <div>
           <OrderDetails
             formData={formData.orderDetails}
-            handleInputChange={() => handleOrderDetail}
+            handleInputChange={handleOrderDetail}
+            handleRichTextChange={handleRichTextChange}
           />
         </div>
       ),
@@ -425,7 +421,7 @@ const TLREditsForm = () => {
       subheader: "Please upload the footage you want us to edit.",
       content: (
         <div>
-          <FootageUpload handleFileUpload={handleFileUpload} />
+          <FootageUpload handleVideoDriveLink={handleVideoDriveLink} />
         </div>
       ),
     },
@@ -443,9 +439,6 @@ const TLREditsForm = () => {
 
   const filteredSteps = steps.filter(
     (step) => step.title !== "Addons" && step.title !== "Video Footage"
-  );
-  const addonDetailsFilterStep = steps.filter(
-    (step) => step.title !== "Addon Details"
   );
 
   return (

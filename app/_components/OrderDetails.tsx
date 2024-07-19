@@ -1,22 +1,36 @@
-import React from 'react';
-import RichTextBox from './RichTextBox';
-import { OrderDetail } from '../constants/blueprints';
+import React from "react";
+import RichTextBox from "./RichTextBox";
+import { OrderDetail } from "../constants/blueprints";
 
 interface OrderDetailsProps {
-  formData: OrderDetail; 
-  handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  formData: OrderDetail;
+  handleInputChange: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
+  handleRichTextChange: (content: string) => void;
 }
 
-const OrderDetails: React.FC<OrderDetailsProps> = ({ formData, handleInputChange }) => {
+const OrderDetails: React.FC<OrderDetailsProps> = ({
+  formData,
+  handleInputChange,
+  handleRichTextChange,
+}) => {
   return (
-    <div className='mb-10'>
-      <p className=' text-white text-lg'> How do you want us to edit the video?</p>
-      <RichTextBox value={formData.richTextData} onChange={()=>handleInputChange} />
-      
+    <div className="mb-10">
+      <p className=" text-white text-lg">
+        {" "}
+        How do you want us to edit the video?
+      </p>
+      <RichTextBox
+        value={formData.richTextData}
+        onChange={handleRichTextChange}
+      />
+
       <div className="mt-4">
         <label className="text-white block mb-2">Example Video URLs:</label>
         <input
           type="text"
+          name="slug"
           className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           value={formData.slug}
           onChange={handleInputChange}
@@ -25,13 +39,14 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({ formData, handleInputChange
       </div>
 
       <div className="mt-4">
-        <label className="text-white block mb-2">Example Video URLs:</label>
+        <label className="text-white block mb-2">Script Link:</label>
         <input
           type="text"
+          name="scriptLink"
           className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          value={formData.slug}
+          value={formData.scriptLink}
           onChange={handleInputChange}
-          placeholder="Enter example video URLs"
+          placeholder="Enter script link"
         />
       </div>
     </div>

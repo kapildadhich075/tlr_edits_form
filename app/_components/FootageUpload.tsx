@@ -1,19 +1,20 @@
-import React from 'react';
+import React from "react";
 
 interface FootageUploadProps {
-  handleFileUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleVideoDriveLink: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const FootageUpload: React.FC<FootageUploadProps> = ({ handleFileUpload }) => {
+const FootageUpload: React.FC<FootageUploadProps> = ({
+  handleVideoDriveLink,
+}) => {
   return (
     <div>
       <input
-        type="file"
-        id="footageUpload"
-        name="footageUpload"
-        accept=".mp4, .mov, .avi, .jpg, .png, .jpeg"
-        onChange={handleFileUpload}
+        type="text"
+        name="footage"
         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        onChange={handleVideoDriveLink}
+        placeholder="Google Drive Link"
       />
     </div>
   );

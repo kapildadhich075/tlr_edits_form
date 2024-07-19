@@ -14,13 +14,20 @@ const ToneData = [
   { label: "No Text", value: "NoText" },
 ];
 
-const AddonDetails: React.FC<{ formData: AddonDetail; handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void }> = ({ formData, handleInputChange }) => {
+const AddonDetails: React.FC<{
+  formData: AddonDetail;
+  handleInputChange: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
+}> = ({ formData, handleInputChange }) => {
   const { selectedAddons } = useAddonContext();
 
   const showThumbnailSection = selectedAddons.includes("Thumbnail");
-  const showVerticalReformatSection = selectedAddons.includes("VerticalReformat");
+  const showVerticalReformatSection =
+    selectedAddons.includes("VerticalReformat");
   const showSquareReformatSection = selectedAddons.includes("squareReformat");
-  const showHorizontalReformatSection = selectedAddons.includes("HorizontalReformat");
+  const showHorizontalReformatSection =
+    selectedAddons.includes("HorizontalReformat");
   const showCaptionStyleSection = selectedAddons.includes("FullVideoCaptions");
   const showPremiereProSection = selectedAddons.includes("PremiereProProject");
 
@@ -33,7 +40,7 @@ const AddonDetails: React.FC<{ formData: AddonDetail; handleInputChange: (e: Rea
             {ToneData.map((data, index) => (
               <div
                 key={index}
-                className="bg-white text-black flex flex-col items-center p-2 rounded-md h-30 justify-center gap-5"
+                className="bg-white text-white flex flex-col items-center p-2 rounded-md h-30 justify-center gap-5"
               >
                 <input
                   type="checkbox"
@@ -54,34 +61,36 @@ const AddonDetails: React.FC<{ formData: AddonDetail; handleInputChange: (e: Rea
             ))}
           </div>
 
-          <div className="scrollable-section">
+          <div className="scrollable-section text-white">
             <p>Include Your Logo?</p>
-            <div>
-              <input
-                className="bg-white text-black flex flex-col items-center p-2 rounded-md h-30 justify-center gap-5"
-                type="radio"
-                name="includeLogo"
-                value="Yes"
-                checked={formData.includeLogo === "Yes"}
-                onChange={handleInputChange}
-              />
-              Yes
-            </div>
-            <div>
-              <input
-                className="bg-white text-black flex flex-col items-center p-2 rounded-md h-30 justify-center gap-5"
-                type="radio"
-                name="includeLogo"
-                value="No"
-                checked={formData.includeLogo === "No"}
-                onChange={handleInputChange}
-              />
-              No
+            <div className="flex flex-row gap-5">
+              <div>
+                <input
+                  className="bg-white text-white flex flex-col items-center p-2 rounded-md h-30 justify-center gap-5"
+                  type="radio"
+                  name="includeLogo"
+                  value="Yes"
+                  checked={formData.includeLogo === "Yes"}
+                  onChange={handleInputChange}
+                />
+                Yes
+              </div>
+              <div>
+                <input
+                  className="bg-white text-white flex flex-col items-center p-2 rounded-md h-30 justify-center gap-5"
+                  type="radio"
+                  name="includeLogo"
+                  value="No"
+                  checked={formData.includeLogo === "No"}
+                  onChange={handleInputChange}
+                />
+                No
+              </div>
             </div>
           </div>
 
           <div className="scrollable-section">
-            <p>Thumbnail Description</p>
+            <p className=" text-white">Thumbnail Description</p>
             <textarea
               name="thumbnailDescription"
               onChange={handleInputChange}
@@ -95,7 +104,7 @@ const AddonDetails: React.FC<{ formData: AddonDetail; handleInputChange: (e: Rea
       {showVerticalReformatSection && (
         <>
           <div className="scrollable-section">
-            <p>Vertical Reformat (&gt;60) Goals</p>
+            <p className=" text-white">Vertical Reformat (&gt;60) Goals</p>
             <input
               name="verticalReformatGoals"
               onChange={handleInputChange}
@@ -104,7 +113,9 @@ const AddonDetails: React.FC<{ formData: AddonDetail; handleInputChange: (e: Rea
             />
           </div>
           <div className="scrollable-section">
-            <p>Vertical Reformat (&gt;60) Example Videos</p>
+            <p className=" text-white">
+              Vertical Reformat (&gt;60) Example Videos
+            </p>
             <input
               name="verticalReformatExampleVideos"
               value={formData.verticalReformatExampleVideos}
@@ -118,7 +129,7 @@ const AddonDetails: React.FC<{ formData: AddonDetail; handleInputChange: (e: Rea
       {showSquareReformatSection && (
         <>
           <div className="scrollable-section">
-            <p>Square Reformat Goals</p>
+            <p className=" text-white">Square Reformat Goals</p>
             <input
               name="squareReformatGoals"
               onChange={handleInputChange}
@@ -127,7 +138,7 @@ const AddonDetails: React.FC<{ formData: AddonDetail; handleInputChange: (e: Rea
             />
           </div>
           <div className="scrollable-section">
-            <p>Square Reformat Examples</p>
+            <p className=" text-white">Square Reformat Examples</p>
             <input
               name="squareReformatExamples"
               value={formData.squareReformatExamples}
@@ -141,7 +152,7 @@ const AddonDetails: React.FC<{ formData: AddonDetail; handleInputChange: (e: Rea
       {showHorizontalReformatSection && (
         <>
           <div className="scrollable-section">
-            <p>Horizontal Reformat Goals</p>
+            <p className=" text-white">Horizontal Reformat Goals</p>
             <input
               name="horizontalReformatGoals"
               onChange={handleInputChange}
@@ -150,7 +161,7 @@ const AddonDetails: React.FC<{ formData: AddonDetail; handleInputChange: (e: Rea
             />
           </div>
           <div className="scrollable-section">
-            <p>Horizontal Reformat Example Videos</p>
+            <p className=" text-white">Horizontal Reformat Example Videos</p>
             <input
               name="horizontalReformatExampleVideos"
               value={formData.horizontalReformatExampleVideos}
@@ -163,7 +174,7 @@ const AddonDetails: React.FC<{ formData: AddonDetail; handleInputChange: (e: Rea
 
       {showCaptionStyleSection && (
         <div className="scrollable-section">
-          <p>Caption Style</p>
+          <p className=" text-white">Caption Style</p>
           <input
             name="captionStyle"
             value={formData.captionStyle}
@@ -175,7 +186,7 @@ const AddonDetails: React.FC<{ formData: AddonDetail; handleInputChange: (e: Rea
 
       {showPremiereProSection && (
         <div className="scrollable-section">
-          <p>Premiere Pro Project File</p>
+          <p className=" text-white">Premiere Pro Project File</p>
           <input
             type="file"
             name="premiereProFile"
