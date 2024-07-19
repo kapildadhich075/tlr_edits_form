@@ -14,7 +14,7 @@ interface Addon {
 interface AddonsProps {
   ADDONS: Addon[];
   formData: AddonDetail;
-  handleInputChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  handleInputChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement >) => void;
 }
 
 const Addons: React.FC<AddonsProps> = ({ ADDONS, formData, handleInputChange }) => {
@@ -28,7 +28,7 @@ const Addons: React.FC<AddonsProps> = ({ ADDONS, formData, handleInputChange }) 
         : prevSelectedAddons.filter((addon) => addon !== value)
     );
   };
-  console.log(selectedAddons);
+  console.log(selectedAddons.length+"ADDONS");
   
 
   return (

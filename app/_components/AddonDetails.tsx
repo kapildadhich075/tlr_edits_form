@@ -26,6 +26,7 @@ const AddonDetails: React.FC<{ formData: AddonDetail; handleInputChange: (e: Rea
 
   return (
     <div style={{ maxHeight: "500px", overflowY: "auto" }}>
+      
       {showThumbnailSection && (
         <>
           <p className="text-white mt-5 mb-2">What should the tone be?</p>

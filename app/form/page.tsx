@@ -7,7 +7,7 @@ import { AddonProvider } from "../_components/AddonContext";
 const HomePage = () => {
   return (
     <>
-      <AddonProvider>
+      <AddonProvider >
         <TLREditsForm />
       </AddonProvider>
     </>
