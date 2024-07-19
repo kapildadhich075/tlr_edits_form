@@ -32,15 +32,15 @@ const AddonDetails: React.FC<{
   const showPremiereProSection = selectedAddons.includes("PremiereProProject");
 
   return (
-    <div style={{ maxHeight: "500px", overflowY: "auto" }}>
+    <div style={{ maxHeight: "500px", overflowY: "auto", width: "800px" }}>
       {showThumbnailSection && (
         <>
-          <p className="text-white mt-5 mb-2">What should the tone be?</p>
+          <p className="text-white mb-2">What should the tone be?</p>
           <div className="grid grid-cols-4 gap-3">
             {ToneData.map((data, index) => (
               <div
                 key={index}
-                className="bg-white text-white flex flex-col items-center p-2 rounded-md h-30 justify-center gap-5"
+                className="bg-white flex flex-col items-center p-2 rounded-md h-30 justify-center gap-5"
               >
                 <input
                   type="checkbox"
@@ -49,6 +49,7 @@ const AddonDetails: React.FC<{
                   onChange={handleInputChange}
                   value={data.value}
                   checked={formData.tone.includes(data.value)}
+                  className="form-checkbox h-4 w-4 text-indigo-500 focus:ring-indigo-500"
                 />
                 <Image
                   src={"/horizontalvideo.png"}
@@ -61,35 +62,39 @@ const AddonDetails: React.FC<{
             ))}
           </div>
 
-          <div className="scrollable-section text-white">
+          <div className="scrollable-section text-white my-4">
             <p>Include Your Logo?</p>
             <div className="flex flex-row gap-5">
-              <div>
+              <div className="flex flex-row gap-2">
                 <input
-                  className="bg-white text-white flex flex-col items-center p-2 rounded-md h-30 justify-center gap-5"
+                  className="bg-white text-white"
                   type="radio"
                   name="includeLogo"
                   value="Yes"
                   checked={formData.includeLogo === "Yes"}
                   onChange={handleInputChange}
                 />
-                Yes
+                <label htmlFor="includeLogo" className="text-white">
+                  Yes
+                </label>
               </div>
-              <div>
+              <div className="flex flex-row gap-2">
                 <input
-                  className="bg-white text-white flex flex-col items-center p-2 rounded-md h-30 justify-center gap-5"
+                  className="bg-white text-white"
                   type="radio"
                   name="includeLogo"
                   value="No"
                   checked={formData.includeLogo === "No"}
                   onChange={handleInputChange}
                 />
-                No
+                <label htmlFor="includeLogo" className="text-white">
+                  No
+                </label>
               </div>
             </div>
           </div>
 
-          <div className="scrollable-section">
+          <div className="scrollable-section my-4">
             <p className=" text-white">Thumbnail Description</p>
             <textarea
               name="thumbnailDescription"
@@ -103,7 +108,7 @@ const AddonDetails: React.FC<{
 
       {showVerticalReformatSection && (
         <>
-          <div className="scrollable-section">
+          <div className="scrollable-section my-4">
             <p className=" text-white">Vertical Reformat (&gt;60) Goals</p>
             <input
               name="verticalReformatGoals"
@@ -112,7 +117,7 @@ const AddonDetails: React.FC<{
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
           </div>
-          <div className="scrollable-section">
+          <div className="scrollable-section my-4">
             <p className=" text-white">
               Vertical Reformat (&gt;60) Example Videos
             </p>
@@ -128,7 +133,7 @@ const AddonDetails: React.FC<{
 
       {showSquareReformatSection && (
         <>
-          <div className="scrollable-section">
+          <div className="scrollable-section my-4">
             <p className=" text-white">Square Reformat Goals</p>
             <input
               name="squareReformatGoals"
@@ -137,7 +142,7 @@ const AddonDetails: React.FC<{
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
           </div>
-          <div className="scrollable-section">
+          <div className="scrollable-section my-4">
             <p className=" text-white">Square Reformat Examples</p>
             <input
               name="squareReformatExamples"
@@ -151,7 +156,7 @@ const AddonDetails: React.FC<{
 
       {showHorizontalReformatSection && (
         <>
-          <div className="scrollable-section">
+          <div className="scrollable-section my-4">
             <p className=" text-white">Horizontal Reformat Goals</p>
             <input
               name="horizontalReformatGoals"
@@ -160,7 +165,7 @@ const AddonDetails: React.FC<{
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
           </div>
-          <div className="scrollable-section">
+          <div className="scrollable-section my-4">
             <p className=" text-white">Horizontal Reformat Example Videos</p>
             <input
               name="horizontalReformatExampleVideos"
@@ -173,7 +178,7 @@ const AddonDetails: React.FC<{
       )}
 
       {showCaptionStyleSection && (
-        <div className="scrollable-section">
+        <div className="scrollable-section my-4">
           <p className=" text-white">Caption Style</p>
           <input
             name="captionStyle"
@@ -185,7 +190,7 @@ const AddonDetails: React.FC<{
       )}
 
       {showPremiereProSection && (
-        <div className="scrollable-section">
+        <div className="scrollable-section my-4">
           <p className=" text-white">Premiere Pro Project File</p>
           <input
             type="file"
