@@ -16,66 +16,69 @@ datasource db {
 
 
 model FormData {
-  id                Int             @id @default(autoincrement())
-  orderType         OrderType
-  rawVideoFootage   RawVideoFootage[]
-  addOns            AddOns[]
-  orderLogistics    OrderLogistics[]
-  styleDetails      StyleDetails[]
-  orderDetails      OrderDetails[]
-  footageUpload     String
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
-}
-
-enum OrderType {
-  HORIZONTAL_VIDEO
-  VERTICAL_VIDEO
-  CHANNEL_ASSETS
-  THUMBNAIL
+  id                      Int              @id @default(autoincrement())
+  orderType               String
+  footageUpload           String
+  createdAt               DateTime         @default(now())
+  updatedAt               DateTime         @updatedAt
+  videoFootageDetails     RawVideoFootage?
+  orderLogisticsDetails   OrderLogistics?
+  styleDetails            StyleDetails?
+  orderDetails            OrderDetails?
+  addonDetails            AddonDetail?
+  selectedAddons          String[]
 }
 
 model RawVideoFootage {
   id             Int       @id @default(autoincrement())
-  footageLength  Int
-  footageSize    Int
-  formDataId     Int
+  length         String
+  size           String
+  formDataId     Int       @unique
   formData       FormData  @relation(fields: [formDataId], references: [id], map: "RawVideoFootage_FormData_fkey")
 }
 
-enum AddOns {
-  THUMBNAIL
-  VERTICAL_REFORMAT
-  SQUARE_REFORMAT
-  HORIZONTAL_REFORMAT
-  FULL_VIDEO_CAPTION
-  PROJECT_FILE
-}
-
 model OrderLogistics {
-  id            Int      @id @default(autoincrement())
-  title         String
-  category      String
-  description   String
-  date          DateTime
-  finalLength   Int
-  formDataId    Int
-  formData      FormData @relation(fields: [formDataId], references: [id], map: "OrderLogistics_FormData_fkey")
+  id               Int       @id @default(autoincrement())
+  videoTitle       String
+  videoCategory    String
+  videoDescription String
+  publishDate      DateTime
+  finalLength      Int
+  formDataId       Int       @unique
+  formData         FormData  @relation(fields: [formDataId], references: [id], map: "OrderLogistics_FormData_fkey")
 }
 
 model StyleDetails {
-  id            Int     @id @default(autoincrement())
-  pacing        String
-  tone          String
-  formDataId    Int
-  formData      FormData @relation(fields: [formDataId], references: [id], map: "StyleDetails_FormData_fkey")
+  id        Int       @id @default(autoincrement())
+  pace      String
+  tone      String[]
+  formDataId Int       @unique
+  formData  FormData  @relation(fields: [formDataId], references: [id], map: "StyleDetails_FormData_fkey")
 }
 
 model OrderDetails {
-  id            Int     @id @default(autoincrement())
-  editInstructions  String
-  exampleVideo      String
-  scriptLink        String
-  formDataId        Int
-  formData          FormData @relation(fields: [formDataId], references: [id], map: "OrderDetails_FormData_fkey")
+  id            Int       @id @default(autoincrement())
+  richTextData  String
+  slug          String
+  scriptLink    String
+  formDataId    Int       @unique
+  formData      FormData  @relation(fields: [formDataId], references: [id], map: "OrderDetails_FormData_fkey")
+}
+
+model AddonDetail {
+  id                            Int       @id @default(autoincrement())
+  tone                          String[]
+  includeLogo                   String
+  followThumbnail               String
+  thumbnailDescription          String
+  verticalReformatGoals         String
+  verticalReformatExampleVideos String
+  squareReformatGoals           String
+  squareReformatExamples        String
+  horizontalReformatGoals       String
+  horizontalReformatExampleVideos String
+  captionStyle                  String
+  editingSoftware               String
+  formDataId                    Int       @unique
+  formData                      FormData  @relation(fields: [formDataId], references: [id], map: "AddonDetail_FormData_fkey")
 }

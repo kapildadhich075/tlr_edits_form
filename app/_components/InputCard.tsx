@@ -28,10 +28,8 @@ export const InputCard = ({
   return (
     <div
       className={`
-      mb-4 container mx-auto p-4 bg-[#f2f2f2] rounded-lg h-auto flex flex-col justify-center items-center gap-5
-        ${checked ? " bg-amber-100 shadow-inner" : "bg-gray-100 shadow-xl"}
-        
-        `}
+      mb-4 container mx-auto p-4 bg-[#f2f2f2] rounded-lg  flex flex-col justify-center items-center gap-5
+        ${checked ? " bg-amber-100 shadow-inner" : "bg-gray-100 shadow-xl"}`}
       data-testid="input-card"
       onClick={onClick}
     >

@@ -1,6 +1,5 @@
 import React from "react";
 import { InputCard } from "./InputCard";
-import Link from "next/link";
 
 interface OrderType {
   id: string;
