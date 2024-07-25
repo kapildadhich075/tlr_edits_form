@@ -422,7 +422,7 @@ const TLREditsForm = () => {
       subheader: "Please upload the footage you want us to edit.",
       content: (
         <div>
-          <FootageUpload handleVideoDriveLink={handleVideoDriveLink} />
+          <FootageUpload handleVideoDriveLink={() => handleVideoDriveLink} />
         </div>
       ),
     },
