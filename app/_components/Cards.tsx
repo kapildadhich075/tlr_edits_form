@@ -1,6 +1,7 @@
 "use client";
 
-import { TextareaHTMLAttributes, useState } from "react";
+import { TextareaHTMLAttributes, useContext, useState } from "react";
+
 import Image from "next/image";
 import { ClerkLoaded, ClerkLoading, UserButton } from "@clerk/nextjs";
 import { ORDER_TYPES } from "../constants/OrderType";
@@ -23,9 +24,12 @@ import {
 } from "../constants/blueprints";
 import CalendlyModal from "./CalendlyModal";
 import { Loader2 } from "lucide-react";
-import AddonDetails from "./AddonDetails";
-import { AddonProvider, useAddonContext } from "./AddonContext";
 
+import { IoReload } from "react-icons/io5";
+
+import { AddonProvider } from "./AddonContext";
+import { useAddonContext } from "./AddonContext";
+import AddonDetails from "./AddonDetails";
 const TLREditsForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [orderDetail, setOrderDetail] = useState<OrderDetail>({
@@ -476,29 +480,29 @@ const TLREditsForm = () => {
       step.title !== "Video Footage" &&
       step.title !== "Addon Details"
   );
-  const addonDetailsFilterStep = steps.filter(
-    (step) => step.title !== "Addon Details"
-  );
+  console.log(selectedAddons + "CARDS");
 
   return (
-    <div className="container flex items-start justify-start h-full">
-      <div className="w-1/4 p-4 flex flex-col gap-5 items-center justify-evenly h-96">
-        <div className="sticky top-4">
-          <div className="flex items-end gap-1 mb-10">
-            <Image
-              src="https://ik.imagekit.io/umdiwr6ma/tlr%20logo.png?updatedAt=1706964634422"
-              alt="logo"
-              width={100}
-              height={100}
-            />
-            <h3>
-              <span className="text-white font-thin italic text-lg">Edits</span>
-            </h3>
-          </div>
-          <ul className="space-y-4">
-            {formData.orderType == "thumbnail"
-              ? filteredSteps.map((step, index) => (
-                  <div key={index} className="flex items-center gap-2">
+    <>
+      <div className="min-h-screen flex justify-center items-center">
+        <div className=" bg-neutral-800/80 m-5 rounded-lg shadow-md flex flex-row items-center p-4">
+          <div className="w-1/4 flex flex-col items-center gap-5">
+            <div className="flex items-end gap-1">
+              <Image
+                src="https://ik.imagekit.io/umdiwr6ma/tlr%20logo.png?updatedAt=1706964634422"
+                alt="logo"
+                width={100}
+                height={100}
+              />
+              <h3 className="text-white font-thin italic text-lg">Edits</h3>
+            </div>
+            <ul className="flex flex-col gap-2 items-start">
+              {(formData.orderType == "thumbnail" ? filteredSteps : steps).map(
+                (step, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center gap-2 justify-center"
+                  >
                     <div
                       className={`rounded-full h-4 w-4 ${
                         currentStep === index + 1 ? "bg-amber-500" : "bg-white"
@@ -514,80 +518,76 @@ const TLREditsForm = () => {
                       {step.title}
                     </li>
                   </div>
-                ))
-              : steps.map((step, index) => (
-                  <div key={index} className="flex items-center gap-2">
-                    <div
-                      className={`rounded-full h-4 w-4 ${
-                        currentStep === index + 1 ? "bg-amber-500" : "bg-white"
-                      }`}
-                    ></div>
-                    <li
-                      className={`p-2 rounded ${
-                        currentStep === index + 1
-                          ? "text-white font-bold"
-                          : "text-white/80 font-extralight"
-                      }`}
-                    >
-                      {step.title}
-                    </li>
-                  </div>
-                ))}
-          </ul>
-        </div>
-        <div className="flex flex-col items-center gap-4">
-          <ClerkLoading>
-            <Loader2 size={32} className=" text-white animate-spin" />
-          </ClerkLoading>
-          <ClerkLoaded>
-            <UserButton />
-          </ClerkLoaded>
-        </div>
-      </div>
-      <div className="relative w-3/4 p-4">
-        {openModal && <CalendlyModal onClick={() => setOpenModal(false)} />}
-        <form onSubmit={handleSubmit} className="w-full flex flex-col gap-6">
-          <div className="text-start">
-            <h1 className="text-2xl font-semibold text-white mb-2">
-              {steps[currentStep - 1].header}
-            </h1>
-            <p className="text-white">{steps[currentStep - 1].subheader}</p>
+                )
+              )}
+            </ul>
+            <div className="flex gap-2 justify-center items-center mt-4">
+              <ClerkLoading>
+                <Loader2 size={32} className="text-white animate-spin" />
+              </ClerkLoading>
+              <ClerkLoaded>
+                <UserButton />
+              </ClerkLoaded>
+              <button
+                className="bg-[#ff4a16] text-white px-4 py-2 text-xs rounded-full"
+                onClick={() => setCurrentStep(1)}
+              >
+                <IoReload />
+              </button>
+            </div>
           </div>
-          {steps[currentStep - 1].content}
-          <div className="flex justify-between gap-4">
-            <button
-              type="button"
-              onClick={prevStep}
-              className={`${
-                currentStep === 1 ? "opacity-50 cursor-not-allowed" : ""
-              } px-4 py-2 bg-gray-500 text-white rounded`}
-              disabled={currentStep === 1}
+
+          <div className="flex-grow mt-4">
+            {openModal && <CalendlyModal onClick={() => setOpenModal(false)} />}
+            <form
+              onSubmit={handleSubmit}
+              className="flex flex-col gap-6 items-start"
             >
-              Previous
-            </button>
-            {currentStep < steps.length ? (
-              <button
-                type="button"
-                onClick={nextStep}
-                className={`${
-                  !isCurrentStepValid() ? "opacity-50 cursor-not-allowed" : ""
-                } px-4 py-2 bg-blue-500 text-white rounded`}
-                disabled={!isCurrentStepValid()}
-              >
-                Next
-              </button>
-            ) : (
-              <button
-                type="submit"
-                className="px-4 py-2 bg-green-500 text-white rounded"
-              >
-                Submit
-              </button>
-            )}
+              <div className="text-start">
+                <h1 className="text-2xl font-semibold text-white mb-2">
+                  {steps[currentStep - 1].header}
+                </h1>
+                <p className="text-white">{steps[currentStep - 1].subheader}</p>
+              </div>
+              {steps[currentStep - 1].content}
+              <div className="flex justify-between gap-4 w-full px-4">
+                <button
+                  type="button"
+                  onClick={prevStep}
+                  className={`${
+                    currentStep === 1 ? "opacity-50 cursor-not-allowed" : ""
+                  } px-4 py-2 bg-gray-500 text-white rounded-md`}
+                  disabled={currentStep === 1}
+                >
+                  Previous
+                </button>
+                {currentStep < steps.length ? (
+                  <button
+                    type="button"
+                    onClick={nextStep}
+                    className={`${
+                      !isCurrentStepValid()
+                        ? "opacity-50 cursor-not-allowed"
+                        : ""
+                    } px-4 py-2 bg-blue-500 text-white rounded-md`}
+                    disabled={!isCurrentStepValid()}
+                  >
+                    Next
+                  </button>
+                ) : (
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-green-500 text-white rounded-md"
+                  >
+                    Submit
+                  </button>
+                )}
+              </div>
+            </form>
           </div>
-        </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
